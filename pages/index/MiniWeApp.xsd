@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://aristotll.me/xml/MiniWeApp"
+            xmlns:wx="http://aristotll.me/xml/MiniWeApp"
+            elementFormDefault="unqualified"
+            version="1.5"
+>
+    <!--
+    Name: MiniWeApp
+    User: Yao
+    Date: 2018/1/13
+    TIMETime: 16:12
+    -->
+    <!--https://stackoverflow.com/questions/31235281/set-attribute-to-all-types-in-xml-schema-->
+    <!--https://mp.weixin.qq.com/debug/wxadoc/dev/component/-->
+    <attributeGroup name="attributesInAllComponents">
+        <annotation>
+            <documentation>
+                共同属性类型
+                所有组件都有的属性 https://mp.weixin.qq.com/debug/wxadoc/dev/component/
+            </documentation>
+        </annotation>
+
+        <attribute name="id" type="xsd:string">
+            <annotation>
+                <documentation>
+                    组件的唯一标示 保持整个页面唯一
+                </documentation>
+            </annotation>
+        </attribute>
+
+        <attribute name="class" type="xsd:string">
+            <annotation>
+                <documentation>
+                    组件的样式类 在对应的 WXSS 中定义的样式类
+                </documentation>
+            </annotation>
+        </attribute>
+
+        <attribute name="style" type="xsd:string">
+            <annotation>
+                <documentation>
+                    组件的内联样式 可以动态设置的内联样式
+                </documentation>
+            </annotation>
+        </attribute>
+
+        <attribute name="hidden" type="xsd:boolean" default="false">
+            <annotation>
+                <documentation>
+                    组件是否显示 所有组件默认显示
+                </documentation>
+            </annotation>
+        </attribute>
+        <!--<attribute name="data-*" type="xsd:anyType">-->
+        <attribute name="data-" type="xsd:anyType">
+            <annotation>
+                <documentation>
+                    自定义属性 组件上触发的事件时，会发送给事件处理函数
+                </documentation>
+            </annotation>
+        </attribute>
+
+        <!--<attribute name="bind* / catch*" type="wx:eventHandler">-->
+        <attribute name="bind" type="wx:eventHandler">
+            <annotation>
+                <documentation>
+                    组件的事件 详见事件
+                </documentation>
+            </annotation>
+        </attribute>
+        <attribute name="catch" type="wx:eventHandler">
+            <annotation>
+                <documentation>
+                    组件的事件 详见事件
+                </documentation>
+            </annotation>
+        </attribute>
+        <!--https://www.w3schools.com/xml/schema_complex_anyattribute.asp-->
+        <!--https://stackoverflow.com/questions/5332603/xsanyattributes-is-rejecting-an-attribute-->
+        <anyAttribute processContents="skip">
+            <annotation>
+                <documentation>
+                    for data-* and bind* / catch* these dynamic attributes
+                </documentation>
+            </annotation>
+        </anyAttribute>
+
+    </attributeGroup>
+
+    <!--    <complexType name="person">
+            <attributeGroup ref="wx:attributesInAllComponents"/>
+        </complexType>-->
+
+
+    <!-- types -->
+    <element name="Person">
+        <annotation>
+            <documentation>Person Request</documentation>
+        </annotation>
+        <complexType>
+            <attributeGroup ref="wx:attributesInAllComponents"/>
+        </complexType>
+    </element>
+    <!--https://stackoverflow.com/questions/376582/xml-schema-element-with-attributes-containing-only-text-->
+    <complexType name="eventHandler">
+        <annotation>
+            <documentation>https://mp.weixin.qq.com/debug/wxadoc/dev/framework/view/wxml/event.html 事件处理函数名
+            </documentation>
+        </annotation>
+        <simpleContent>
+            <extension base="xsd:string">
+                <!--<attribute name="value" type="string"/>-->
+            </extension>
+        </simpleContent>
+    </complexType>
+    <element name="view">
+        <annotation>
+            <documentation>视图容器 https://mp.weixin.qq.com/debug/wxadoc/dev/component/view.html</documentation>
+        </annotation>
+        <!--https://stackoverflow.com/questions/381782/xml-schema-element-that-can-contain-elements-or-text-->
+        <complexType mixed="true">
+            <sequence>
+                <!--https://stackoverflow.com/questions/27433257/how-to-specify-any-element-in-a-sequence-->
+                <!--https://stackoverflow.com/questions/381782/xml-schema-element-that-can-contain-elements-or-text-->
+                <!--https://stackoverflow.com/questions/16917703/how-to-define-xsd-to-allow-any-element-->
+                <any processContents="skip" namespace="##any" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+            <attributeGroup ref="wx:attributesInAllComponents"/>
+            <!--https://stackoverflow.com/questions/18929351/assign-default-value-to-xsd-attribute-->
+            <attribute name="hover-class" type="xsd:string" default="none">
+                <annotation>
+                    <documentation>
+                        default value none 指定按下去的样式类。当 hover-class="none" 时，没有点击态效果
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="hover-stop-propagation" type="xsd:boolean" default="false">
+                <annotation>
+                    <documentation>
+                        default value false 指定是否阻止本节点的祖先节点出现点击态 since 1.5.0
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="hover-start-time" type="xsd:integer" default="50">
+                <annotation>
+                    <documentation>
+                        default value 50 按住后多久出现点击态，单位毫秒
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="hover-stay-time" type="xsd:integer" default="400">
+                <annotation>
+                    <documentation>
+                        default value 400 手指松开后点击态保留时间，单位毫秒
+                    </documentation>
+                </annotation>
+            </attribute>
+            <!--            <anyAttribute processContents="skip">
+                            <annotation>
+                                <documentation>
+                                    for data-* and bind* / catch*
+                                </documentation>
+                            </annotation>
+                        </anyAttribute>-->
+        </complexType>
+    </element>
+
+    <element name="scroll-view">
+        <annotation>
+            <documentation><![CDATA[
+                可滚动视图区域 https://mp.weixin.qq.com/debug/wxadoc/dev/component/scroll-view.html
+
+               Bug & Tip
+                1. `tip`: 请勿在 `scroll-view` 中使用 `textarea`、`map`、`canvas`、`video` 组件
+                2. `tip`: `scroll-into-view` 的优先级高于 `scroll-top`
+                3. `tip`: 在滚动 `scroll-view` 时会阻止页面回弹，所以在 `scroll-view` 中滚动，是无法触发 `onPullDownRefresh`
+                4. `tip`: 若要使用下拉刷新，请使用页面的滚动，而不是 `scroll-view` ，这样也能通过点击顶部状态栏回到页面顶部
+                            ]]>
+
+            </documentation>
+        </annotation>
+        <complexType mixed="true">
+            <sequence>
+                <any processContents="skip" namespace="##any" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+            <attributeGroup ref="wx:attributesInAllComponents"/>
+            <attribute name="scroll-x" type="xsd:boolean" default="false">
+                <annotation>
+                    <documentation>
+                        default value: false 允许横向滚动
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="scroll-y" type="xsd:boolean" default="false">
+                <annotation>
+                    <documentation>
+                        default value: false 允许纵向滚动
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="upper-threshold" type="xsd:integer" default="50">
+                <annotation>
+                    <documentation>
+                        default value: 50 距顶部 / 左边多远时（单位 px），触发 scrolltoupper 事件
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="lower-threshold" type="xsd:integer" default="50">
+                <annotation>
+                    <documentation>
+                        default value:50 距底部 / 右边多远时（单位 px），触发 scrolltolower 事件
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="scroll-top" type="xsd:integer">
+                <annotation>
+                    <documentation>
+                        设置竖向滚动条位置
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="scroll-left" type="xsd:integer">
+                <annotation>
+                    <documentation>
+                        设置横向滚动条位置
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="scroll-into-view" type="xsd:string">
+                <annotation>
+                    <documentation>
+                        值应为某子元素 id（id 不能以数字开头）。设置哪个方向可滚动，则在哪个方向滚动到该元素
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="scroll-with-animation" type="xsd:boolean" default="false">
+                <annotation>
+                    <documentation>
+                        default value:false 在设置滚动条位置时使用动画过渡
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="enable-back-to-top" type="xsd:boolean" default="false">
+                <annotation>
+                    <documentation>
+                        default value:false iOS 点击顶部状态栏、安卓双击标题栏时，滚动条返回顶部，只支持竖向
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="bindscrolltoupper" type="wx:eventHandler">
+                <annotation>
+                    <documentation>
+                        滚动到顶部 / 左边，会触发 scrolltoupper 事件
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="bindscrolltolower" type="wx:eventHandler">
+                <annotation>
+                    <documentation>
+                        滚动到底部 / 右边，会触发 scrolltolower 事件
+                    </documentation>
+                </annotation>
+            </attribute>
+
+            <attribute name="bindscroll" type="wx:eventHandler">
+                <annotation>
+                    <documentation>
+                        滚动时触发，event.detail = {scrollLeft, scrollTop, scrollHeight, scrollWidth, deltaX, deltaY}
+                    </documentation>
+                </annotation>
+            </attribute>
+        </complexType>
+    </element>
+</xsd:schema>
+
